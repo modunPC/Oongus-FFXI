@@ -20,9 +20,9 @@
 --]]
 
 addon.name      = 'clockvana';
-addon.author    = 'atom0s (modified by Almavivaconte)';
-addon.version   = '1.0';
-addon.desc      = 'Allows the player to display various times on screen. (Vana\'diel time elements added by Almavivaconte)';
+addon.author    = 'atom0s (modified by Almavivaconte & Oongus)';
+addon.version   = '1.1';
+addon.desc      = 'Allows the player to display various times on screen. (Vana\'diel time elements added by Almavivaconte, toggle added by Oongus)';
 addon.link      = 'https://ashitaxi.com/';
 
 require('common');
@@ -48,6 +48,11 @@ local default_settings = T{
     format = '[%I:%M:%S]',
     separator = ' - ',
     clocks = T{ },
+    hide = T{
+        day = false,
+        date = false,
+        moon = false,
+    },
 };
 
 -- Clock Variable
@@ -223,6 +228,7 @@ local function print_help(isError)
         { '/time (f | fmt | format) [format]', 'Displays or sets the timestamp format to be used with the clocks.' },
         { '/time (s | sep | separator) [separator]', 'Displays or sets the separator to be used between each clock.' },
         { '/time (c | col | color) <a> <r> <g> <b>', 'Sets the clock color.' },
+        { '/time (h | hide) <day | date | moon>', 'Toggle visible elements of the clock.' },
     };
 
     -- Print the command list..
@@ -458,6 +464,23 @@ ashita.events.register('command', 'command_cb', function (e)
         return;
     end
 
+    -- Handle: /time h <day | date | moon> - Toggle visible elements of the clock display.
+    -- Handle: /time hide <day | date | moon> - Toggle visible elements of the clock display.
+    if (#args >= 3 and args[2]:any('hide') and args[3]:any('day', 'date', 'moon')) then
+        local toggle = args[3];
+        local setting = clock.settings.hide[toggle];
+        if (setting == false) then
+            setting = true;
+        else
+            setting = false
+        end
+        clock.settings.hide[toggle] = setting;
+        settings.save();
+
+        print(chat.header(addon.name):append(chat.success(toggle)):append(chat.message(' visibility set to: ')):append(chat.success(setting)));
+        return;
+    end
+
     -- Unhandled: Print help information..
     print_help(true);
 end);
@@ -478,8 +501,18 @@ ashita.events.register('d3d_present', 'present_cb', function ()
     clock.settings.clocks:each(function (v)
         clocks:append(('%s %s'):fmt(os.date(clock.settings.format, (os.time() - clock.utc_diff) + v[2] * 3600), v[1]));
     end);
+    -- Build the clock elements based on toggles
     local ffxi_time = tostring(get_timestamp())
     local ffxi_date = get_current_date()
-    local ffxi_datetime = ffxi_time .. " " .. tostring(ffxi_date.weekday) .. " " .. tostring(math.floor(ffxi_date.year)) .. "-" .. tostring(math.floor(ffxi_date.month)) .. "-" .. tostring(ffxi_date.day) .. " " .. tostring(ffxi_date.moon_percent) .. "%"
+    local ffxi_datetime = ffxi_time
+    if (clock.settings.hide.day ~= false) then
+        ffxi_datetime = ffxi_datetime .. " " .. tostring(ffxi_date.weekday)
+    end
+    if (clock.settings.hide.date ~= false) then
+        ffxi_datetime = ffxi_datetime .. " " .. tostring(math.floor(ffxi_date.year)) .. "-" .. tostring(math.floor(ffxi_date.month)) .. "-" .. tostring(ffxi_date.day)
+    end
+    if (clock.settings.hide.moon ~= false) then
+        ffxi_datetime = ffxi_datetime .. " " .. tostring(ffxi_date.moon_percent) .. "%"
+    end
     clock.font.text = clocks:concat(clock.settings.separator) .. " " .. ffxi_datetime;
 end);

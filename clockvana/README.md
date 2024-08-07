@@ -18,5 +18,6 @@ Modification of atom0s's clock addon to add in Vana'diel time elements.  This is
         { '/time clear', 'Removes all clocks.' },
         { '/time (f | fmt | format) [format]', 'Displays or sets the timestamp format to be used with the clocks.' },
         { '/time (s | sep | separator) [separator]', 'Displays or sets the separator to be used between each clock.' },
-        { '/time (c | col | color) <a> <r> <g> <b>', 'Sets the clock color.' }
+        { '/time (c | col | color) <a> <r> <g> <b>', 'Sets the clock color.' },
+        { '/time (h | hide) <day | date | moon>', 'Toggle visible elements of the clock.' }
 ```
