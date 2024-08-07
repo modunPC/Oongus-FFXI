@@ -228,7 +228,7 @@ local function print_help(isError)
         { '/time (f | fmt | format) [format]', 'Displays or sets the timestamp format to be used with the clocks.' },
         { '/time (s | sep | separator) [separator]', 'Displays or sets the separator to be used between each clock.' },
         { '/time (c | col | color) <a> <r> <g> <b>', 'Sets the clock color.' },
-        { '/time (h | hide) <day | date | moon>', 'Toggle visible elements of the clock.' },
+        { '/time (h | hide | t | toggle) <day | date | moon>', 'Toggle visible elements of the clock.' },
     };
 
     -- Print the command list..
@@ -466,7 +466,9 @@ ashita.events.register('command', 'command_cb', function (e)
 
     -- Handle: /time h <day | date | moon> - Toggle visible elements of the clock display.
     -- Handle: /time hide <day | date | moon> - Toggle visible elements of the clock display.
-    if (#args >= 3 and args[2]:any('hide') and args[3]:any('day', 'date', 'moon')) then
+    -- Handle: /time t <day | date | moon> - Toggle visible elements of the clock display.
+    -- Handle: /time toggle <day | date | moon> - Toggle visible elements of the clock display.
+    if (#args >= 3 and args[2]:any('h', 'hide', 't', 'toggle') and args[3]:any('day', 'date', 'moon')) then
         local toggle = args[3];
         local setting = clock.settings.hide[toggle];
         if (setting == false) then
