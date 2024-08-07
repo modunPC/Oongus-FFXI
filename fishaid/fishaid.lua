@@ -1,6 +1,6 @@
 addon.name      = 'FishAid';
-addon.author    = 'Thorny';
-addon.version   = '1.01';
+addon.author    = 'Thorny, modified by Oongus';
+addon.version   = '1.02';
 addon.desc      = 'Displays more visible messages for fishing dialogue.';
 addon.link      = 'https://ashitaxi.com/';
 
@@ -112,6 +112,15 @@ ashita.events.register('text_in', 'FishAid_HandleText', function (e)
             return;
         end
     end
+
+    if (state.Feel == 'Unknown') then
+        if (string.find(e.message, 'Your keen angler\'s senses tell you that this is the pull of a') ~= nil) then
+            state.Feel = string.sub(e.message, 63, -4);
+            state.FeelColor = '|cFF00FFFF|';
+            e.mode_modified = 204;
+            return
+        end
+    end
 end);
 
 ashita.events.register('d3d_present', 'BotAPI_HandleRender', function ()
@@ -124,7 +133,7 @@ ashita.events.register('d3d_present', 'BotAPI_HandleRender', function ()
     end
 
     if (state.Active == true) then
-        state.Font.text = string.format('Fish:%s%s|r Feeling:%s%s|r', state.FishColor, state.Fish, state.FeelColor, state.Feel);
+        state.Font.text = string.format('Fish: %s%s|r\nFeeling: %s%s|r', state.FishColor, state.Fish, state.FeelColor, state.Feel);
         state.Font.visible = true;
     else
         state.Font.visible = false;
