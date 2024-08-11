@@ -21,7 +21,7 @@
 
 addon.name      = 'clockvana';
 addon.author    = 'atom0s (modified by Almavivaconte & Oongus)';
-addon.version   = '1.1';
+addon.version   = '1.2';
 addon.desc      = 'Allows the player to display various times on screen. (Vana\'diel time elements added by Almavivaconte, toggle added by Oongus)';
 addon.link      = 'https://ashitaxi.com/';
 
@@ -297,6 +297,12 @@ ashita.events.register('command', 'command_cb', function (e)
 
     -- Handle: /time save - Saves the current settings.
     if (#args >= 2 and args[2]:any('save')) then
+        local positionX = clock.font.position_x;
+        local positionY = clock.font.position_y;
+        if (positionX ~= clock.settings.font.position_x) or (positionY ~= clock.settings.font.position_y) then
+            clock.settings.font.position_x = positionX;
+            clock.settings.font.position_y = positionY;
+        end
         settings.save();
         print(chat.header(addon.name):append(chat.message('Settings saved.')));
         return;
